@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medicine Orders</title>
+    <style>
+           body {
+            font-family: Arial, sans-serif;
+            background-image: url('B')
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background */
+            background-attachment: fixed; /* Fix the background when scrolling */
+            background-blur: 5px; /* Adjust the blur effect as needed */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+         .form-container {
+            width: 300px; /* Adjust the width as needed */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow for a subtle effect */
+        }
+
+        /* Additional styles for input fields and button */
+        input[type="text"],
+        input[type="number"],
+        button {
+            width: 100%;
+            margin-top: 10px;
+            box-sizing: border-box;
+            padding: 5px;
+        }
+
+     
+
+        .navbar, .footer {
+            background-color: #ff69b4; /* Pink color */
+            color: white;
+            text-align: center;
+            flex: 0 0 auto; /* Allow navbar and footer to shrink if content grows */
+        }
+
+        .navbar a, .footer a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .footer {
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        .navbar a:hover, .footer a:hover {
+            background-color: #4169e1; /* Blue color */
+        }
+
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <a href="/">Home</a>
+    <a href="/views/medorder">Medicine Order</a> <!-- Updated href -->
+    <a href="/medications">Inventory</a> <!-- Updated href to /medications -->
+    <a href="/bills">Billing</a>
+    <a href="/customer-record">Customer Record Management</a>
+</div>
+
+
+
+
+    <h1 style="display: flex; text-align:center; justify-content:center">Medicine Orders</h1>
+
+
+
+    <!-- Form to submit new orders -->
+    <form action="/" method="POST" style="justify-content:center">
+        <!-- Input fields for medname, quantity, vendorname -->
+        <input type="text" name="medname" placeholder="Medicine Name" required ><br>
+        <input type="number" name="quantity" placeholder="Quantity" required ><br>
+        <input type="text" name="vendorname" placeholder="Vendor Name" required ><br>
+        <button type="submit" >Submit</button>
+    </form>
+    <hr>
+
+    {{#if pendingOrders}}
+        <h2>Existing Orders (Pending)</h2>
+        <table>
+            <!-- Table header -->
+            <tr>
+                <th>Order ID</th>
+                <th>Medicine Name</th>
+                <th>Quantity</th>
+                <th>Vendor Name</th>
+                <th>Date Placed</th>
+            </tr>
+            <!-- Loop through pendingOrders and display rows -->
+            {{#each pendingOrders}}
+                <tr>
+                    <td>{{this.orderid}}</td>
+                    <td>{{this.medname}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.vendorname}}</td>
+                    <td>{{this.date}}</td>
+                    <td><button class="markedasdone" data-orderid="{{this.orderid}}">Order Received</button></td>
+                </tr>
+            {{/each}}
+        </table>
+    {{else}}
+        <p>No pending orders available.</p>
+    {{/if}}
+
+    {{#if receivedOrders}}
+        <h2>Done Orders (Received)</h2>
+        <table>
+            <!-- Table header -->
+            <tr>
+                <th>Order ID</th>
+                <th>Medicine Name</th>
+                <th>Quantity</th>
+                <th>Vendor Name</th>
+                <th>Date Placed</th>
+                <th>Date Received</th>
+            </tr>
+            <!-- Loop through receivedOrders and display rows -->
+            {{#each receivedOrders}}
+                <tr>
+                    <td>{{this.orderid}}</td>
+                    <td>{{this.medname}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.vendorname}}</td>
+                    <td>{{this.date}}</td>
+                    <td>{{this.recdate}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    {{else}}
+        <p>No received orders available.</p>
+    {{/if}}
+
+<!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Medicos Pharmacy. All rights reserved.</p>
+    </div>
+
+
+    <!-- JavaScript code for marking orders as received -->
+<script>
+    document.querySelectorAll('.markedasdone').forEach(button => {
+        button.addEventListener('click', function() {
+            const oid = button.getAttribute('data-orderid');
+            const confirmation = confirm('Have you received the order with ID ' + oid + '?');
+            if (confirmation) {
+                fetch('/update-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderid: oid })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Order with ID ' + oid + ' has been marked as received.');
+                        // You can add additional logic here if needed
+                    } else {
+                        throw new Error('Failed to update status');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating status:', error);
+                    alert('Failed to update status. Please try again.');
+                });
+            }
+        });
+    });
+</script>
+
+
+    
+</body>
+</html>

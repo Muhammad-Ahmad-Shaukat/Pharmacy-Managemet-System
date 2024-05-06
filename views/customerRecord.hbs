@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Management</title>
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            background-image: url('B')
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background */
+            background-attachment: fixed; /* Fix the background when scrolling */
+            background-blur: 5px; /* Adjust the blur effect as needed */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px; /* Add some space between the title and the table */
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.1); /* Transparent background */
+            color: black; /* Black text color */
+            font-weight: bold; /* Bold font weight */
+        }
+
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+
+     
+         .navbar, .footer {
+            background-color: #ff69b4; /* Pink color */
+            color: white;
+            text-align: center;
+            flex: 0 0 auto; /* Allow navbar and footer to shrink if content grows */
+        }
+
+        .navbar a, .footer a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .footer {
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        .navbar a:hover, .footer a:hover {
+            background-color: #4169e1; /* Blue color */
+        }
+
+
+    </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/views/medorder">Medicine Order</a> <!-- Updated href -->
+    <a href="/medications">Inventory</a> <!-- Updated href to /medications -->
+    <a href="/bills">Billing</a>
+    <a href="/customer-record">Customer Record Management</a>
+</div>
+
+<h1 style="text-align:center;">Customer Management</h1>
+<form action="/customers/add" method="POST" style="justify-content:center">
+    <input type="text" name="name" placeholder="Customer Name" required><br>
+    <input type="text" name="email" placeholder="Email" required><br>
+    <input type="number" name="phone" placeholder="Phone" required><br>
+    <input type="text" name="address" placeholder="Address" required><br>
+    <button type="submit">Submit</button>
+</form>
+
+<table>
+    <tr>
+        <th>Customer ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Action</th>
+    </tr>
+    {{#each customers}}
+    <tr>
+        <td>{{this.customerid}}</td>
+        <td>{{this.name}}</td>
+        <td>{{this.email}}</td>
+        <td>{{this.phone}}</td>
+        <td>{{this.address}}</td>
+        <td><button class="delete" customerid="{{this.customerid}}">Delete</button></td>
+
+  </tr>
+
+    </tr>
+    {{/each}}
+</table>
+
+
+</body>
+
+<script>
+     
+  document.querySelectorAll('.delete').forEach(button => {
+        button.addEventListener('click', function() {
+            const cid = button.getAttribute('customerid');
+            const confirmation = confirm('Have you received the order with ID ' + cid + '?');
+            if (confirmation) {
+                fetch('/customer-record-delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ customerid: cid })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('customer with ' + cid + ' has been deleted.');
+                        // You can add additional logic here if needed
+                    } else {
+                        throw new Error('Failed to update status');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating status:', error);
+                    alert('Failed to update status. Please try again.');
+                });
+            }
+        });
+
+
+
+   document.getElementById('add-customer-form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    const form = this;
+    const formData = new FormData(form);
+
+    fetch('/customers/add', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            // If submission is successful, reload the page to reflect changes
+            window.location.reload();
+        } else {
+            throw new Error('Failed to add customer');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding customer:', error);
+        alert('Failed to add customer. Please try again.');
+    });
+});
+
+
+    fetch('/customer-record', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(customerData)
+    })
+    .then(response => {
+        if (response.ok) {
+            // If submission is successful, reload the page to reflect changes
+            window.location.reload();
+        } else {
+            throw new Error('Failed to add customer');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding customer:', error);
+        alert('Failed to add customer. Please try again.');
+    });
+};
+
+// Add event listener to form submission
+document.getElementById('add-customer-form').addEventListener('submit', handleFormSubmit);
+</script>
+
+<!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Medicos Pharmacy. All rights reserved.</p>
+    </div>
+
+
+
+
+</html>

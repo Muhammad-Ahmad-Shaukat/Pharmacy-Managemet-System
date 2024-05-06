@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('B')
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background */
+            background-attachment: fixed; /* Fix the background when scrolling */
+            background-blur: 5px; /* Adjust the blur effect as needed */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar, .footer {
+            background-color: #ff69b4; /* Pink color */
+            color: white;
+            text-align: center;
+            flex: 0 0 auto; /* Allow navbar and footer to shrink if content grows */
+        }
+
+        .navbar a, .footer a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .footer {
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        .navbar a:hover, .footer a:hover {
+            background-color: #4169e1; /* Blue color */
+        }
+
+        /* Center the heading */
+        h1 {
+            text-align: center;
+            margin-top: 50px; /* Add some space between navbar and h1 */
+        }
+
+        /* Wrapper style */
+        .wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 25px;
+            background-color: rgba(255, 182, 193, 0.7); /* Light pink color with transparency */
+            border-radius: 10px; /* Rounded corners */
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/views/medorder">Medicine Order</a> <!-- Updated href -->
+    <a href="/medications">Inventory</a> <!-- Updated href to /medications -->
+    <a href="/bills">Billing</a>
+    <a href="/customer-record">Customer Record Management</a>
+</div>
+
+
+<h1>Medicos Pharmacy</h1>
+
+    <!-- About Us Wrapper -->
+    <div class="wrapper">
+        <h2>About Us</h2>
+        <p>Welcome to Medicos Pharmacy! We are committed to providing high-quality pharmaceutical services to our customers.</p>
+    </div>
+
+    <!-- Vision Wrapper -->
+    <div class="wrapper">
+        <h2>Vision</h2>
+        <p>Our vision is to become the leading pharmacy in our community by offering exceptional customer service and a wide range of healthcare products.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Medicos Pharmacy. All rights reserved.</p>
+    </div>
+
+</body>
+
+</html>

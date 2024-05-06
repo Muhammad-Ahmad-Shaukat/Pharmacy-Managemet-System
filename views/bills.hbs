@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Bill</title>
+    <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-image: url('B')
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background */
+            background-attachment: fixed; /* Fix the background when scrolling */
+            background-blur: 5px; /* Adjust the blur effect as needed */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar, .footer {
+            background-color: #ff69b4; /* Pink color */
+            color: white;
+            text-align: center;
+            flex: 0 0 auto; /* Allow navbar and footer to shrink if content grows */
+        }
+
+        .navbar a, .footer a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .footer {
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        .navbar a:hover, .footer a:hover {
+            background-color: #4169e1; /* Blue color */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .form-group label {
+            float: left;
+            width: 30%;
+        }
+
+        .form-group input,
+        .form-group select {
+            float: left;
+            width: 70%;
+        }
+
+        .form-group.dual {
+            width: 100%;
+        }
+
+        .form-group.dual input,
+        .form-group.dual select {
+            width: 48%;
+            margin-right: 4%;
+        }
+
+        .form-group.dual input:last-child,
+        .form-group.dual select:last-child {
+            margin-right: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+      <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/views/medorder">Medicine Order</a> <!-- Updated href -->
+    <a href="/medications">Inventory</a> <!-- Updated href to /medications -->
+    <a href="/bills">Billing</a>
+    <a href="/customer-record">Customer Record Management</a>
+</div>
+    <div class="container">
+        <h1>Create Bill</h1>
+        <form action="/create-bill" method="POST" id="billForm">
+            <div class="form-group">
+                <label for="medicationId">Medication ID:</label>
+                <input type="text" id="medicationId" name="medicationId">
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="1">
+            </div>
+            <button type="submit">Add Medicine</button>
+        </form>
+
+        <div id="selectedMedicines">
+            <h3>Selected Medicines:</h3>
+            <ul id="selectedMedicinesList">
+                {{#each selectedMedicines}}
+                    <li>{{this.name}} - Price: ${{this.price}} - Quantity: {{this.quantity}} - Subtotal: ${{this.subtotal}}</li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <label for="total">Total Price:</label>
+            <span id="totalPrice">$ {{totalPrice}}</span>
+        </div>
+
+        <button>save bill</button>
+    </div>
+</div>
+
+        <!-- Search Form -->
+        <form action="/bills/medication" method="GET" class="search-form" style="margin-bottom: 20px;">
+            <input type="text" id="search" name="search" placeholder="Enter medication name">
+            <button type="submit">Search</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Medication ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Expiry Date</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each medications}}
+                <tr>
+                    <td>{{medication_id}}</td>
+                    <td>{{name}}</td>
+                    <td>{{description}}</td>
+                    <td>{{expiry_date}}</td>
+                    <td>{{this.Price}}</td>
+                    <td>{{quantity}}</td>
+                     
+
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Medicos Pharmacy. All rights reserved.</p>
+    </div>
+</body>
+
+ <script>
+        // Function to handle adding medicines to the bill
+        const addMedicineToBill = async () => {
+            const medicationId = document.getElementById('medicationId').value;
+            const quantity = document.getElementById('quantity').value;
+
+            const response = await fetch('/add-medicine', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ medicationId, quantity })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                updateSelectedMedicines(data.selectedMedicines);
+                updateTotalPrice(data.totalPrice);
+            } else {
+                alert('Failed to add medicine to bill.');
+            }
+        };
+
+        // Function to update the selected medicines list in the UI
+        const updateSelectedMedicines = (medicines) => {
+            const selectedMedicinesList = document.getElementById('selectedMedicinesList');
+            selectedMedicinesList.innerHTML = '';
+            medicines.forEach(medicine => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${medicine.name} - Price: $${medicine.price} - Quantity: ${medicine.quantity} - Subtotal: $${medicine.subtotal}`;
+                selectedMedicinesList.appendChild(listItem);
+            });
+        };
+
+        // Function to update the total price in the UI
+        const updateTotalPrice = (totalPrice) => {
+            document.getElementById('totalPrice').textContent = `$ ${totalPrice}`;
+        };
+
+        // Attach event listener to the form submit button
+        document.querySelector('#billForm button[type="submit"]').addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default form submission
+            addMedicineToBill();
+        });
+    </script>
+</html>
